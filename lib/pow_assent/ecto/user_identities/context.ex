@@ -138,10 +138,8 @@ defmodule PowAssent.Ecto.UserIdentities.Context do
 #    IO.inspect(config, label: "AAAAAA*A**AA config: ")
 #    IO.inspect(token, label: "AAAAAA*A**AA token: ")
 #    IO.inspect(params, label: "AAAAAA*A**AA params: ")
-    access_token = token["access_token"]
-    scope = token["scope"]
     res = user_identity
-    |> user_identity.__struct__.changeset(%{provider: provider, uid: uid, token: access_token, scope: scope, data: params})
+    |> user_identity.__struct__.changeset(%{provider: provider, uid: uid, tokens: token, data: params})
 #    IO.inspect(res, label: "AAAAAA*A**AA user_identity: ")
     res
     |> repo(config).insert()

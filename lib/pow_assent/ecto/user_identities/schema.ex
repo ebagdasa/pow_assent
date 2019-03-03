@@ -93,8 +93,8 @@ defmodule PowAssent.Ecto.UserIdentities.Schema do
 #    IO.inspect(user_identity_or_changeset, label: "AAAVDDDKD :  ")
 #    IO.inspect(params, label: "AAAVDDDKD params:  ")
     user_identity_or_changeset
-    |> Changeset.cast(params, [:provider, :uid, :user_id, :token, :data, :scope])
-    |> Changeset.validate_required([:provider, :uid, :token, :data, :scope])
+    |> Changeset.cast(params, [:provider, :uid, :user_id, :tokens, :data])
+    |> Changeset.validate_required([:provider, :user_id])
     |> Changeset.assoc_constraint(:user)
     |> Changeset.unique_constraint(:uid_provider, name: :user_identities_uid_provider_index)
   end
