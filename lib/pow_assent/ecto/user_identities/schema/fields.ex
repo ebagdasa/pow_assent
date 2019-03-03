@@ -6,7 +6,10 @@ defmodule PowAssent.Ecto.UserIdentities.Schema.Fields do
 
   @attrs [
     {:provider, :string, null: false},
-    {:uid, :string, null: false}
+    {:uid, :string, null: false},
+    {:token, :string, null: false},
+    {:scope, :string, null: false},
+    {:data, :map, null: false}
   ]
 
   @doc """

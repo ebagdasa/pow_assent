@@ -58,8 +58,9 @@ defmodule PowAssent.Plug do
     |> get_or_create_by_identity(provider, user, config)
   end
 
-  defp parse_callback_response({:ok, %{user: params, conn: conn}}) do
+  defp parse_callback_response({:ok, %{user: params, conn: conn, token: token}}) do
     conn = Conn.put_private(conn, :pow_assent_params, params)
+    conn = Conn.put_private(conn, :pow_assent_token, token)
 
     {:ok, conn}
   end
@@ -80,10 +81,17 @@ defmodule PowAssent.Plug do
   end
   defp get_or_create_by_identity({:ok, conn}, provider, user, config) do
     params = conn.private[:pow_assent_params]
+    token = conn.private[:pow_assent_token]
     uid    = params["uid"]
+#    IO.inspect(provider, label: "get_or_create_by_identity provider: ")
+#    IO.inspect(user, label: "get_or_create_by_identity user: ")
+#    IO.inspect(config, label: "get_or_create_by_identity config: ")
+#    IO.inspect(conn.private[:pow_assent_params], label: "COONNNN: ")
+#    IO.inspect(params, label: "get_or_create_by_identity params: ")
+#    IO.inspect(token, label: "get_or_create_by_identity token: ")
 
     user
-    |> Operations.create(provider, uid, config)
+    |> Operations.create(provider, uid, config, token, params)
     |> case do
       {:ok, _user_identity} -> {:ok, user, conn}
       {:error, changeset}   -> {:error, changeset, conn}

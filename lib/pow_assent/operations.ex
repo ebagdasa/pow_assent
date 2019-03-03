@@ -36,6 +36,14 @@ defmodule PowAssent.Operations do
     end
   end
 
+  def create(user, provider, uid, config, token, params) do
+    IO.inspect(context_module(config), label: "context_module(config) : ")
+    case context_module(config) do
+      Context -> Context.create(user, provider, uid, config, token, params)
+      module  -> module.create(user, provider, uid)
+    end
+  end
+
   @doc """
   Creates user with user identity with the provided user params.
 

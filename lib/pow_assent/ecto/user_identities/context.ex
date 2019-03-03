@@ -130,6 +130,30 @@ defmodule PowAssent.Ecto.UserIdentities.Context do
     end
   end
 
+  @spec create(user(), binary(), binary(), Config.t()) :: {:ok, user_identity()} | {:error, {:bound_to_different_user, map()}} | {:error, Changeset.t()}
+  def create(user, provider, uid, config, token, params) do
+    user_identity = Ecto.build_assoc(user, :user_identities)
+#    IO.inspect(provider, label: "AAAAAA*A**AA prov: ")
+#    IO.inspect(uid, label: "AAAAAA*A**AA uid: ")
+#    IO.inspect(config, label: "AAAAAA*A**AA config: ")
+#    IO.inspect(token, label: "AAAAAA*A**AA token: ")
+#    IO.inspect(params, label: "AAAAAA*A**AA params: ")
+    access_token = token["access_token"]
+    scope = token["scope"]
+    res = user_identity
+    |> user_identity.__struct__.changeset(%{provider: provider, uid: uid, token: access_token, scope: scope, data: params})
+#    IO.inspect(res, label: "AAAAAA*A**AA user_identity: ")
+    res
+    |> repo(config).insert()
+    |> case do
+      {:error, %{errors: [uid_provider: _]} = changeset} ->
+        {:error, {:bound_to_different_user, changeset}}
+
+      {:ok, user_identity} ->
+        {:ok, user_identity}
+    end
+  end
+
   @doc """
   Creates a user with user identity.
 

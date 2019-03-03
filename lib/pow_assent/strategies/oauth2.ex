@@ -75,10 +75,19 @@ defmodule PowAssent.Strategy.OAuth2 do
     client_secret = Keyword.get(config, :client_secret)
     params        = authorization_params(config, code: code, client_secret: client_secret, redirect_uri: redirect_uri, grant_type: "authorization_code")
     token_url     = Keyword.get(config, :token_url, "/oauth/token")
-    url           = Helpers.to_url(config[:site], token_url, params)
 
-    :post
-    |> Helpers.request(url, "", [], config)
+    response = case Keyword.get(config, :strategy) do
+       PowAssent.Strategy.AzureOAuth2 ->
+         url = Helpers.to_url(config[:site], token_url, [])
+         body = URI.encode_query(params)
+         :post
+            |> Helpers.request(url, body, [{'content-type', 'application/x-www-form-urlencoded'}], config)
+       _ ->
+         url = Helpers.to_url(config[:site], token_url, params)
+         :post
+            |> Helpers.request(url, "", [], config)
+    end
+    response
     |> Helpers.decode_response(config)
     |> process_access_token_response()
   end
