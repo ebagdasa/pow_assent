@@ -93,7 +93,7 @@ defmodule PowAssent.Phoenix.AuthorizationController do
     |> redirect(to: after_delete_path(conn))
   end
 
-  defp after_delete_path(conn), do: routes(conn).registration_path(conn, :edit)
+  defp after_delete_path(conn), do: routes(conn).page_path(conn, :redirect_dashboard)
 
   defp load_state_from_session(%{private: %{plug_session: plug_session}} = conn, _opts) do
     case plug_session do
